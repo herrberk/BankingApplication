@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
-public class UserInterface extends JPanel implements ActionListener {
+class UserInterface extends JPanel implements ActionListener {
 
     private JLabel picture;
 

@@ -4,7 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class AccountImplement implements Account{
+ class AccountImplement implements Account{
 
 	private long accountID;
 	private int balLeft, balRight, SIN;
@@ -14,7 +14,7 @@ public class AccountImplement implements Account{
 	/**
 	 * Constructor Method - initializes all the instance variables
 	 */
-	public AccountImplement() {
+	AccountImplement() {
 		name = lastName = birthDate = null;
 		lastActivityDate=null;
 		accountID = 0;
@@ -25,7 +25,7 @@ public class AccountImplement implements Account{
 	/**
 	 * Constructor Method - initializes all the instance variables with an amount
 	 */
-	public AccountImplement(int amount) {
+	AccountImplement(int amount) {
 		name = lastName = birthDate = null;
 		lastActivityDate=null;
 		accountID = 0;
