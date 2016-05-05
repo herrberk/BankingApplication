@@ -13,7 +13,7 @@ public class UserInterfaceTest {
     }
 
     /**
-     * Unsuccessfull ImageIcon creation
+     * Unsuccessful ImageIcon creation
      */
     @Test
     public void testCreateImageIcon2(){
