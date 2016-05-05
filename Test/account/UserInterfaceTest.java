@@ -1,10 +1,13 @@
+package account;
+
 import static org.junit.Assert.*;
+
 import org.junit.Test;
 
 public class UserInterfaceTest {
 
     /**
-     * Successfull ImageIcon creation
+     * Successful ImageIcon creation
      */
     @Test
     public void testCreateImageIcon(){
