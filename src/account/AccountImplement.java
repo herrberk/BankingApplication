@@ -37,7 +37,6 @@ import java.util.Date;
 	/**
 	 * Withdraw method is used to withdraw multiples of 20 from the balance
 	 */
-
 	public boolean withdraw(int amount) {
 		if(balLeft<amount){
 			System.out.println("Error --> Amount exceeds the balance!  ");
@@ -57,7 +56,6 @@ import java.util.Date;
 	/**
 	 * Deposit method used to deposit some amount to the account
 	 */
-
 	public boolean deposit(int amount) {
 		if(accountInUse){
 			int temp = balLeft;
@@ -77,7 +75,6 @@ import java.util.Date;
 	/**
 	 * Returns information about the account
 	 */
-
 	private String toSTR(){
 		StringBuilder sb = new StringBuilder();
 		sb.append(System.lineSeparator());sb.append("---------------------------------");

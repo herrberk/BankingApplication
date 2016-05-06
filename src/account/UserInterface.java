@@ -12,27 +12,36 @@ class UserInterface extends JPanel implements ActionListener {
 
     private JLabel picture;
     private JPasswordField pw;
+    private JFormattedTextField username;
+    private static final Color backgroundColor = Color.WHITE;
+    private static final Color foregroundColor = Color.BLACK;
     private int counter=0;
+
+    // Constructor
     private UserInterface() {
         super(new BorderLayout(1,1));
 
-        JPanel topPanel = new JPanel();
-        JPanel bottomPanel = new JPanel();
-        topPanel.setBackground(Color.ORANGE);
-        bottomPanel.setBackground(Color.ORANGE);
-        topPanel.setLayout(new GridBagLayout());
-
-
         final String[] str = { "Admin Login","Customer Login" };
+
+        // Initialize the 3 Panels (left - auth - right)
+        JPanel leftPanel = new JPanel();
+        JPanel authPanel = new JPanel();
+        JPanel rightPanel = new JPanel();
+
+        // Change their layouts and background color
+        leftPanel.setBackground(backgroundColor);
+        authPanel.setBackground(backgroundColor);
+        rightPanel.setBackground(backgroundColor);
+        leftPanel.setLayout(new GridBagLayout());
+        authPanel.setLayout(new GridLayout(4,4));
 
         //Create the combo box, select the item at index 1.
         JComboBox<java.lang.String> list = new JComboBox<>(str);
         list.setSelectedIndex(1);
         list.setBorder(BorderFactory.createTitledBorder(new TitledBorder("Select Role:")));
-        list.setBackground(Color.ORANGE);
-
+        list.setBackground(backgroundColor);
+        list.setForeground(foregroundColor);
         list.setActionCommand("LIST");
-
         list.addActionListener(this);
 
         //Set up the picture.
@@ -45,30 +54,60 @@ class UserInterface extends JPanel implements ActionListener {
 
         //Set up the password field
         pw = new JPasswordField(10);
-        pw.setHorizontalAlignment(SwingConstants.LEFT);
+        pw.setHorizontalAlignment(SwingConstants.CENTER);
         pw.setMinimumSize(new Dimension(400, 20));
-        pw.setText("******");
-        pw.setActionCommand("OK");
+        pw.setText("**********");
+        pw.setBorder(BorderFactory.createTitledBorder(new TitledBorder("Password:")));
+        pw.setBackground(backgroundColor);
+        pw.setForeground(foregroundColor);
+        pw.setSelectedTextColor(backgroundColor);
+        pw.setSelectionColor(foregroundColor);
+        pw.setActionCommand("ENTER");
         pw.addActionListener(this);
 
-        //Add Elements to the page
-        topPanel.add(list);
-        topPanel.add(pw);
-        bottomPanel.add(picture, LEFT_ALIGNMENT);
+        //Set up the username field
+        username = new JFormattedTextField("Enter Username....");
+        username.setHorizontalAlignment(SwingConstants.CENTER);
+        username.setBorder(BorderFactory.createTitledBorder(new TitledBorder("User Name:")));
+        username.setBackground(backgroundColor);
+        username.setForeground(foregroundColor);
+        username.setSelectedTextColor(backgroundColor);
+        username.setSelectionColor(foregroundColor);
+        username.setActionCommand("ENTER");
+        username.addActionListener(this);
 
-        this.add(topPanel, BorderLayout.WEST);
-        this.add(bottomPanel, BorderLayout.EAST);
-        setBorder(BorderFactory.createEmptyBorder(20,40,20,20));
+        //Add Elements to the page
+        JLabel pad1 = new JLabel();
+        leftPanel.add(list);
+        authPanel.add(pad1);
+        authPanel.add(username,BOTTOM_ALIGNMENT);
+        authPanel.add(pw,BOTTOM_ALIGNMENT);
+        rightPanel.add(picture, LEFT_ALIGNMENT);
+        this.add(authPanel,BorderLayout.CENTER);
+        this.add(leftPanel, BorderLayout.WEST);
+        this.add(rightPanel, BorderLayout.EAST);
+        this.setBorder(BorderFactory.createEmptyBorder(20,40,20,20));
     }
 
-    /** Listens to the combo box. */
-    @SuppressWarnings("unchecked")
+    /** Listens to the events */
+
     public void actionPerformed(ActionEvent e) {
+
+        eventHandler(e);
+
+    }
+
+    /**
+     * Handles the events depending on their status code
+     * @param e of type ActionEvent
+     */
+    @SuppressWarnings("unchecked")
+    private void eventHandler(ActionEvent e){
 
         JComboBox<String> cb;
 
         // Event 1 ---> User Clicks on the Selection Box
-        if("LIST".equals(e.getActionCommand())) {
+        if ("LIST".equals(e.getActionCommand())) {
             cb = (JComboBox<String>) e.getSource();
 
             if (e.getSource() instanceof JComboBox) {
@@ -77,23 +116,24 @@ class UserInterface extends JPanel implements ActionListener {
             }
         }
 
-        // Event 2 ---> User enters a Password and presses on 'Enter'
-        if("OK".equals(e.getActionCommand())) {
-            char[] input = pw.getPassword();
-            if(counter!=3) {
-                if (isPasswordCorrect(input)) {
+        // Event 2 ---> User enters a Username then a Password and presses on 'Enter'
+        if ("ENTER".equals(e.getActionCommand())) {
+            char[] input1 = username.getText().toCharArray();
+            char[] input2 = pw.getPassword();
+
+            if (counter != 3) {
+                if ((isUsernameCorrect(input1) && isPasswordCorrect(input2))) {
                     JOptionPane.showMessageDialog(this,
                             "Login Successful!");
                     counter = 0;
                 } else {
                     counter++;
                     JOptionPane.showMessageDialog(this,
-                            "Invalid password. Try again.(" + (3 - counter) + " Remaining)",
+                            "Invalid entry. Try again.(" + (3 - counter) + " Remaining)",
                             "Error Message",
                             JOptionPane.ERROR_MESSAGE);
                 }
-            }
-            else {
+            } else {
                 JOptionPane.showMessageDialog(this,
                         "Please Contact the System Administrator");
                 System.exit(-1);
@@ -106,8 +146,7 @@ class UserInterface extends JPanel implements ActionListener {
      * @param input of type char[]
      * @return isCorrect
      */
-
-   private static boolean isPasswordCorrect(char[] input) {
+    private static boolean isPasswordCorrect(char[] input) {
         boolean isCorrect;
         char[] correctPassword = {'b', 'e', 'r', 'k', '1', '2', '3'};
 
@@ -118,7 +157,24 @@ class UserInterface extends JPanel implements ActionListener {
         Arrays.fill(correctPassword, '0');
 
         return isCorrect;
-    }
+   }
+
+    /**
+     * Method to check the entered username
+     * @param input of type char[]
+     * @return isCorrect
+     */
+    private static boolean isUsernameCorrect(char[] input) {
+        boolean isCorrect;
+        char[] correctUsername = "herrberk".toCharArray();
+
+        isCorrect = input.length == correctUsername.length &&
+                Arrays.equals(input, correctUsername);
+
+        Arrays.fill(correctUsername, '0');
+
+        return isCorrect;
+   }
 
 
     private void updateLabel(String name) {
@@ -132,8 +188,10 @@ class UserInterface extends JPanel implements ActionListener {
         }
     }
 
-    /** Returns an ImageIcon, or null if the path was invalid. */
-     static ImageIcon createImageIcon(String path) {
+    /**
+     * Returns an ImageIcon, or null if the path was invalid.
+     */
+    static ImageIcon createImageIcon(String path) {
         java.net.URL imgURL = UserInterface.class.getResource(path);
         if (imgURL != null) {
             return new ImageIcon(imgURL);
@@ -157,7 +215,7 @@ class UserInterface extends JPanel implements ActionListener {
 
         //Create and set up the content pane.
         JComponent newContentPane = new UserInterface();
-        newContentPane.setBackground(Color.ORANGE);
+        newContentPane.setBackground(backgroundColor);
         newContentPane.setPreferredSize(new Dimension(500,200));
         frame.setContentPane(newContentPane);
 
