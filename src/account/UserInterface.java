@@ -1,7 +1,9 @@
 package account;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.plaf.basic.BasicBorders;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,12 +38,14 @@ class UserInterface extends JPanel implements ActionListener {
         JPanel authPanel = new JPanel();
         JPanel rightPanel = new JPanel();
 
+
         // Change their layouts and background color
         leftPanel.setBackground(backgroundColor);
         authPanel.setBackground(backgroundColor);
         rightPanel.setBackground(backgroundColor);
-        leftPanel.setLayout(new GridBagLayout());
+        leftPanel.setLayout(new GridLayout(1,1));
         authPanel.setLayout(new GridLayout(4,4));
+        rightPanel.setLayout(new GridLayout(4,4));
 
         //Create the combo box, select the item at index 1.
         JComboBox<java.lang.String> list = new JComboBox<>(str);
@@ -60,6 +64,14 @@ class UserInterface extends JPanel implements ActionListener {
         updateLabel(str[list.getSelectedIndex()]);
         picture.setBorder(BorderFactory.createEmptyBorder(10,20,0,20));
         picture.setPreferredSize(new Dimension(177, 122+10));
+
+        //Set up the logo.
+        JLabel logo = new JLabel();
+        logo.setHorizontalAlignment(JLabel.LEFT);
+        ImageIcon icon = createImageIcon("./images/logo.png");
+        logo.setIcon(icon);
+        logo.setBorder(BorderFactory.createEmptyBorder(10,20,0,20));
+
 
         //Set up the password field
         pw = new JPasswordField(10);
@@ -85,13 +97,30 @@ class UserInterface extends JPanel implements ActionListener {
         username.setActionCommand("ENTER");
         username.addActionListener(this);
 
+        // Create and set up the login button
+        JButton login = new JButton();
+        ImageIcon icon2 = createImageIcon("./images/login.png");
+        ImageIcon icon3 = createImageIcon("./images/login2.png");
+        login.setIcon(icon2);
+        login.setPressedIcon(icon3);
+        login.setActionCommand("LOGIN");
+        login.setBackground(backgroundColor);
+        login.setBorderPainted(false);
+        login.setContentAreaFilled(false);
+        login.setFocusPainted(false);
+        login.setSize(new Dimension(10, 10));
+
         //Add Elements to the page
         JLabel pad1 = new JLabel();
-        leftPanel.add(list);
+        leftPanel.add(logo,LEFT_ALIGNMENT);
         authPanel.add(pad1);
+        authPanel.add(list);
         authPanel.add(username,BOTTOM_ALIGNMENT);
         authPanel.add(pw,BOTTOM_ALIGNMENT);
+        rightPanel.add(pad1,LEFT_ALIGNMENT);
         rightPanel.add(picture, LEFT_ALIGNMENT);
+        rightPanel.add(login,LEFT_ALIGNMENT);
+
         this.add(authPanel,BorderLayout.CENTER);
         this.add(leftPanel, BorderLayout.WEST);
         this.add(rightPanel, BorderLayout.EAST);
@@ -236,7 +265,7 @@ class UserInterface extends JPanel implements ActionListener {
         //Create and set up the content pane.
         JComponent newContentPane = new UserInterface();
         newContentPane.setBackground(backgroundColor);
-        newContentPane.setPreferredSize(new Dimension(500,200));
+        newContentPane.setPreferredSize(new Dimension(700,230));
         frame.setContentPane(newContentPane);
 
         //Display the window.
