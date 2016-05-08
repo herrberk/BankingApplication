@@ -5,7 +5,10 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
 
 
 class UserInterface extends JPanel implements ActionListener {
@@ -16,12 +19,17 @@ class UserInterface extends JPanel implements ActionListener {
     private static final Color backgroundColor = Color.WHITE;
     private static final Color foregroundColor = Color.BLACK;
     private int counter=0;
+    private String select=null;
 
-    // Constructor
+    private Connection con=null;
+
     private UserInterface() {
         super(new BorderLayout(1,1));
 
         final String[] str = { "Admin Login","Customer Login" };
+
+        //Create a connection to the Database
+        con = MySQLConnect.ConnectDB();
 
         // Initialize the 3 Panels (left - auth - right)
         JPanel leftPanel = new JPanel();
@@ -38,6 +46,7 @@ class UserInterface extends JPanel implements ActionListener {
         //Create the combo box, select the item at index 1.
         JComboBox<java.lang.String> list = new JComboBox<>(str);
         list.setSelectedIndex(1);
+        select = (String)list.getSelectedItem();
         list.setBorder(BorderFactory.createTitledBorder(new TitledBorder("Select Role:")));
         list.setBackground(backgroundColor);
         list.setForeground(foregroundColor);
@@ -66,7 +75,7 @@ class UserInterface extends JPanel implements ActionListener {
         pw.addActionListener(this);
 
         //Set up the username field
-        username = new JFormattedTextField("Enter Username....");
+        username = new JFormattedTextField();
         username.setHorizontalAlignment(SwingConstants.CENTER);
         username.setBorder(BorderFactory.createTitledBorder(new TitledBorder("User Name:")));
         username.setBackground(backgroundColor);
@@ -89,8 +98,8 @@ class UserInterface extends JPanel implements ActionListener {
         this.setBorder(BorderFactory.createEmptyBorder(20,40,20,20));
     }
 
-    /** Listens to the events */
-
+    /**
+     * Listens to the events */
     public void actionPerformed(ActionEvent e) {
 
         eventHandler(e);
@@ -102,7 +111,7 @@ class UserInterface extends JPanel implements ActionListener {
      * @param e of type ActionEvent
      */
     @SuppressWarnings("unchecked")
-    private void eventHandler(ActionEvent e){
+    private void eventHandler(ActionEvent e) {
 
         JComboBox<String> cb;
 
@@ -111,72 +120,83 @@ class UserInterface extends JPanel implements ActionListener {
             cb = (JComboBox<String>) e.getSource();
 
             if (e.getSource() instanceof JComboBox) {
-                String st = (String) cb.getSelectedItem();
-                updateLabel(st);
+                select = (String) cb.getSelectedItem();
+                updateLabel(select);
             }
         }
 
-        // Event 2 ---> User enters a Username then a Password and presses on 'Enter'
+        // Event 2 ---> User enters a Username and a Password and presses on 'Enter'
         if ("ENTER".equals(e.getActionCommand())) {
-            char[] input1 = username.getText().toCharArray();
-            char[] input2 = pw.getPassword();
 
-            if (counter != 3) {
-                if ((isUsernameCorrect(input1) && isPasswordCorrect(input2))) {
-                    JOptionPane.showMessageDialog(this,
-                            "Login Successful!");
-                    counter = 0;
-                } else {
+        try {
+            if (isLoginCorrect() && counter != 3 ) {
+                // If admin is logging in
+                if (select.equals("Admin Login") && username.getText().equals("admin")) {
+                    JOptionPane.showMessageDialog(null, "Welcome Admin!");
+                }
+                // If admin or customers are logging in
+                else if(select.equals("Customer Login")){
+                    JOptionPane.showMessageDialog(null, "Hello, " + username.getText());
+                }
+                else{
                     counter++;
                     JOptionPane.showMessageDialog(this,
                             "Invalid entry. Try again.(" + (3 - counter) + " Remaining)",
                             "Error Message",
                             JOptionPane.ERROR_MESSAGE);
                 }
-            } else {
-                JOptionPane.showMessageDialog(this,
-                        "Please Contact the System Administrator");
-                System.exit(-1);
             }
+
+            else {
+                counter++;
+
+                if(counter==3){
+                    counter=0;
+                    JOptionPane.showMessageDialog(this,
+                            "Access Denied !");
+                    System.exit(-1);
+                }
+
+                JOptionPane.showMessageDialog(this,
+                        "Invalid entry. Try again.(" + (3 - counter) + " Remaining)",
+                        "Error Message",
+                        JOptionPane.ERROR_MESSAGE);
+
+            }
+
+        } catch(Exception e3){
+            JOptionPane.showMessageDialog(null, "here");
+        }
         }
     }
 
     /**
-     * Method to check the entered password
-     * @param input of type char[]
-     * @return isCorrect
+     * Method to check the login information
+     * @return isCorrect of type boolean
      */
-    private static boolean isPasswordCorrect(char[] input) {
-        boolean isCorrect;
-        char[] correctPassword = {'b', 'e', 'r', 'k', '1', '2', '3'};
+    private boolean isLoginCorrect() {
 
-        isCorrect = input.length == correctPassword.length &&
-                Arrays.equals(input, correctPassword);
+        try {
+            String sql = "SELECT * FROM Account WHERE Username =? and Password =?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, username.getText());
+            pst.setString(2, String.valueOf(pw.getPassword()));
+            ResultSet rs = pst.executeQuery();
 
-        //Zero out the password.
-        Arrays.fill(correctPassword, '0');
+            if (rs.next())
+                return true;
 
-        return isCorrect;
+            } catch (Exception e2) {
+                JOptionPane.showMessageDialog(null, e2);
+            }
+
+        return false;
    }
 
     /**
-     * Method to check the entered username
-     * @param input of type char[]
-     * @return isCorrect
+     * Updates the label of the selected image
+     * @param name of type String
      */
-    private static boolean isUsernameCorrect(char[] input) {
-        boolean isCorrect;
-        char[] correctUsername = "herrberk".toCharArray();
-
-        isCorrect = input.length == correctUsername.length &&
-                Arrays.equals(input, correctUsername);
-
-        Arrays.fill(correctUsername, '0');
-
-        return isCorrect;
-   }
-
-
     private void updateLabel(String name) {
         ImageIcon icon = createImageIcon("./images/" + name + ".png");
         picture.setIcon(icon);
