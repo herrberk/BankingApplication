@@ -5,36 +5,60 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-
-
 
 class UserInterface extends JPanel implements ActionListener {
 
     private JLabel picture;
     private JPasswordField pw;
     private JFormattedTextField username;
+    private JProgressBar progress;
     private static final Color backgroundColor = Color.WHITE;
     private static final Color foregroundColor = Color.BLACK;
-    private int counter=0;
+    private int counter=0, i=0;
     private String select=null;
+    private static final int maxNumberOfTries = 5;
+    private static JFrame frame;
 
     private Connection con=null;
 
     private UserInterface() {
         super(new BorderLayout(1,1));
+        initialize();
+    }
+
+    /**
+     * Initializes and creates all the visual elements required for this Frame
+     */
+    private void initialize(){
 
         final String[] str = { "Admin Login","Customer Login" };
 
         //Create a connection to the Database
         con = MySQLConnect.ConnectDB();
 
+
+        //Set up the online/offline status indicator.
+        JLabel status = new JLabel();
+        status.setHorizontalAlignment(JLabel.LEFT);
+        ImageIcon online = createImageIcon("./images/online.png");
+        ImageIcon offline = createImageIcon("./images/offline.png");
+        status.setBorder(BorderFactory.createEmptyBorder(10,20,0,20));
+
+        if(MySQLConnect.status){
+            status.setIcon(online);
+        } else status.setIcon(offline);
+
+
+
         // Initialize the 3 Panels (left - auth - right)
         JPanel leftPanel = new JPanel();
         JPanel authPanel = new JPanel();
         JPanel rightPanel = new JPanel();
+        JPanel bottomPanel = new JPanel();
 
 
         // Change their layouts and background color
@@ -101,7 +125,6 @@ class UserInterface extends JPanel implements ActionListener {
         ImageIcon icon3 = createImageIcon("./images/login2.png");
         login.setIcon(icon2);
         login.setPressedIcon(icon3);
-
         login.setBackground(backgroundColor);
         login.setBorderPainted(false);
         login.setContentAreaFilled(false);
@@ -110,21 +133,43 @@ class UserInterface extends JPanel implements ActionListener {
         login.setActionCommand("LOGIN");
         login.addActionListener(this);
 
+
+        // Progress Bar
+        progress = new JProgressBar();
+        progress.setValue(0);
+        progress.setBackground(backgroundColor);
+        progress.setMaximum(100);
+        progress.setPreferredSize(new Dimension(600,20));
+        progress.setBorderPainted(false);
+
+
         //Add Elements to the page
-        JLabel pad1 = new JLabel();
+        JLabel pad1 = new JLabel("-----------------------------------------------------");
+
         leftPanel.add(logo,LEFT_ALIGNMENT);
-        authPanel.add(pad1);
+
         authPanel.add(list);
+        authPanel.add(pad1);
         authPanel.add(username,BOTTOM_ALIGNMENT);
         authPanel.add(pw,BOTTOM_ALIGNMENT);
-        rightPanel.add(pad1,LEFT_ALIGNMENT);
+        rightPanel.add(status,LEFT_ALIGNMENT);
         rightPanel.add(picture, LEFT_ALIGNMENT);
         rightPanel.add(login,LEFT_ALIGNMENT);
+        bottomPanel.add(progress);
 
         this.add(authPanel,BorderLayout.CENTER);
         this.add(leftPanel, BorderLayout.WEST);
         this.add(rightPanel, BorderLayout.EAST);
+        this.add(bottomPanel,BorderLayout.SOUTH);
         this.setBorder(BorderFactory.createEmptyBorder(20,40,20,20));
+    }
+
+    /**
+     * Closes the Frame after successful login
+     */
+    private void close(){
+        WindowEvent wce = new WindowEvent(frame,WindowEvent.WINDOW_CLOSING);
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wce);
     }
 
     /**
@@ -157,47 +202,77 @@ class UserInterface extends JPanel implements ActionListener {
         // Event 2 ---> User enters a Username and a Password and presses on 'Enter'
         if ("ENTER".equals(e.getActionCommand()) || "LOGIN".equals(e.getActionCommand())) {
 
-        try {
-            if (isLoginCorrect() && counter != 3 ) {
-                // If admin is logging in
-                if (select.equals("Admin Login") && username.getText().equals("admin")) {
-                    JOptionPane.showMessageDialog(null, "Welcome Admin!");
-                }
-                // If admin or customers are logging in
-                else if(select.equals("Customer Login")){
-                    JOptionPane.showMessageDialog(null, "Hello, " + username.getText());
-                }
-                else{
-                    counter++;
-                    JOptionPane.showMessageDialog(this,
-                            "Invalid entry. Try again.(" + (3 - counter) + " Remaining)",
-                            "Error Message",
-                            JOptionPane.ERROR_MESSAGE);
-                }
+
+            try {
+                 if (isLoginCorrect() && counter <= maxNumberOfTries ) {
+                     progressBar(true);
+                     // If admin is logging in
+                     if (select.equals("Admin Login") && username.getText().equals("admin")) {
+                         // JOptionPane.showMessageDialog(null, "Welcome Admin!");
+
+                         // Close the current page and move to the Admin Panel
+                         Admin admin = new Admin();
+                         admin.setVisible(true);
+                         close();
+
+                     }
+                     else if (select.equals("Admin Login") && !username.getText().equals("admin")) {
+                         cannotLogin();
+                     }
+                     // If admin or customers are logging in
+                     else if(select.equals("Customer Login")&& !username.getText().equals("admin")){
+                         JOptionPane.showMessageDialog(null, "Hello, " + username.getText());
+                    }
+                 }
+                 else {
+                    cannotLogin();
+                 }
+
+            } catch(Exception e3){
+                 JOptionPane.showMessageDialog(null, "Error --> System is Offline..");
             }
-
-            else {
-                counter++;
-
-                if(counter==3){
-                    counter=0;
-                    JOptionPane.showMessageDialog(this,
-                            "Access Denied !");
-                    System.exit(-1);
-                }
-
-                JOptionPane.showMessageDialog(this,
-                        "Invalid entry. Try again.(" + (3 - counter) + " Remaining)",
-                        "Error Message",
-                        JOptionPane.ERROR_MESSAGE);
-
-            }
-
-        } catch(Exception e3){
-            JOptionPane.showMessageDialog(null, "here");
-        }
         }
     }
+
+    /**
+     * Login Failure
+     */
+    private void cannotLogin(){
+        counter++;
+
+        if(counter==maxNumberOfTries){
+            counter=0;
+            JOptionPane.showMessageDialog(this,
+                    "Access Denied !(" + (counter) + " Remaining)");
+            System.exit(-1);
+        }
+        progressBar(false);
+        JOptionPane.showMessageDialog(this,
+                "Invalid entry. Try again.(" + (maxNumberOfTries - counter) + " Remaining)",
+                "Error Message",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * Progress bar implementation (Red(%50) or Green(%100))
+     * @param b of type boolean
+     */
+    private void progressBar(boolean b){
+        if(b) {
+            progress.setForeground(Color.GREEN);
+            while (i < 100) {
+                i++;
+                progress.setValue(i);
+            }
+        }
+        else{
+            progress.setForeground(Color.RED);
+            while (i < 100) {
+                i++;
+                progress.setValue(i);
+                }
+            }
+        }
 
     /**
      * Method to check the login information
@@ -216,7 +291,7 @@ class UserInterface extends JPanel implements ActionListener {
                 return true;
 
             } catch (Exception e2) {
-                JOptionPane.showMessageDialog(null, e2);
+                JOptionPane.showMessageDialog(null, "Error --> System is Offline..");
             }
 
         return false;
@@ -257,15 +332,15 @@ class UserInterface extends JPanel implements ActionListener {
      */
     private static void createAndShowGUI() {
         //Create and set up the window.
-        JFrame frame;
-        frame = new JFrame("Welcome to BerkBank Login!");
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        frame = new JFrame("Welcome to BotBank Login!");
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.setResizable(false);
 
         //Create and set up the content pane.
         JComponent newContentPane = new UserInterface();
         newContentPane.setBackground(backgroundColor);
-        newContentPane.setPreferredSize(new Dimension(700,230));
+        newContentPane.setPreferredSize(new Dimension(700,280));
         frame.setContentPane(newContentPane);
 
         //Display the window.
