@@ -1,9 +1,7 @@
 package account;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.plaf.basic.BasicBorders;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -103,12 +101,14 @@ class UserInterface extends JPanel implements ActionListener {
         ImageIcon icon3 = createImageIcon("./images/login2.png");
         login.setIcon(icon2);
         login.setPressedIcon(icon3);
-        login.setActionCommand("LOGIN");
+
         login.setBackground(backgroundColor);
         login.setBorderPainted(false);
         login.setContentAreaFilled(false);
         login.setFocusPainted(false);
         login.setSize(new Dimension(10, 10));
+        login.setActionCommand("LOGIN");
+        login.addActionListener(this);
 
         //Add Elements to the page
         JLabel pad1 = new JLabel();
@@ -155,7 +155,7 @@ class UserInterface extends JPanel implements ActionListener {
         }
 
         // Event 2 ---> User enters a Username and a Password and presses on 'Enter'
-        if ("ENTER".equals(e.getActionCommand())) {
+        if ("ENTER".equals(e.getActionCommand()) || "LOGIN".equals(e.getActionCommand())) {
 
         try {
             if (isLoginCorrect() && counter != 3 ) {
