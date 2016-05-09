@@ -221,7 +221,10 @@ class UserInterface extends JPanel implements ActionListener {
                      }
                      // If admin or customers are logging in
                      else if(select.equals("Customer Login")&& !username.getText().equals("admin")){
-                         JOptionPane.showMessageDialog(null, "Hello, " + username.getText());
+                         // Close the current page and move to the Admin Panel
+                         Customer customer = new Customer(username.getText());
+                         customer.setVisible(true);
+                         close();
                     }
                  }
                  else {
