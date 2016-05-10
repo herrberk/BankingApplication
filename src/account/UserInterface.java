@@ -214,6 +214,7 @@ class UserInterface extends JPanel implements ActionListener {
                          Admin admin = new Admin();
                          admin.setVisible(true);
                          close();
+                         con.close();  //close the connection
 
                      }
                      else if (select.equals("Admin Login") && !username.getText().equals("admin")) {
@@ -225,6 +226,7 @@ class UserInterface extends JPanel implements ActionListener {
                          Customer customer = new Customer(username.getText());
                          customer.setVisible(true);
                          close();
+                         con.close(); //close the connection
                     }
                  }
                  else {

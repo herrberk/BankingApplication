@@ -5,20 +5,62 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 
 
 class Customer extends JFrame implements ActionListener {
 
     private static final Color backgroundColor = Color.WHITE;
     private static final Color foregroundColor = Color.BLACK;
+    private static final Color successColor = Color.GREEN;
+    private static final Color failureColor = Color.RED;
     private static final Font font = new Font("SansSerif", Font.BOLD, 16);
     private static final Font font1 = new Font("SansSerif", Font.BOLD, 14);
     private static final Font font2 = new Font("SansSerif", Font.BOLD, 22);
     private static final Font font3 = new Font("SansSerif",  Font.ITALIC, 14);
 
+    private JTextField textField1;
+    private JTextField textField2;
+    private JTextField textField3;
+    private JTextField textField4;
+    private JTextField textField6;
+    private JTextField textField7;
+    private JButton button1;
+    private JButton button2;
+    private JButton button3;
+    private JButton button4;
+    private JLabel ID;
+    private JLabel last;
+    private JLabel label6;
+    private JLabel label8;
+    private JLabel label9;
+    private ChequingAccount user;
+
     Customer(String username) {
         super("**** Customer Console : " + username + " ****");
+
         initialize();
+
+        user = new ChequingAccount();
+        getUserData();
+
+    }
+
+    /**
+     * Retrieves the user information
+     */
+    private void getUserData(){
+
+        textField1.setText(user.getName());
+        textField2.setText(user.getLastName());
+        textField3.setText(Integer.toString(user.getSIN()));
+        textField4.setText(user.getBirthDate());
+        label6.setText(Integer.toString(user.getBalLeft()));
+        label8.setText(Integer.toString(user.getBalRight()));
+        label9.setText(user.getCurrency());
+        last.setText(user.getLastActivity());
+        ID.setText(Integer.toString(user.getID()));
+
     }
 
     /**
@@ -59,82 +101,106 @@ class Customer extends JFrame implements ActionListener {
 
         //Line1 (AccountID)
         JPanel p = new JPanel();
-        JLabel ID = new JLabel("Account ID:"+"1234567891011");
+        JLabel accID = new JLabel("Account ID: ");
+        ID = new JLabel("N/A");
+        accID.setFont(font);
         ID.setFont(font);
+        p.add(accID);
         p.add(ID);
 
         //Line2 ( name )
         JPanel panel1 = new JPanel();
-        JTextField textField1 = new JTextField("Berk");
+        textField1 = new JTextField("N/A");
         textField1.setPreferredSize(new Dimension(200,40));
         textField1.setFont(font);
         textField1.setBorder(BorderFactory.createTitledBorder(new TitledBorder("Name:")));
         textField1.setForeground(foregroundColor);
-        JButton button1 = new JButton("Update");
+        button1 = new JButton("Update");
         button1.setPreferredSize(new Dimension(140,40));
         button1.setFont(font1);
         button1.setBackground(foregroundColor);
         button1.setForeground(backgroundColor);
+        button1.setActionCommand("NAME");
+        button1.addActionListener(this);
         panel1.add(textField1);
         panel1.add(button1);
 
         //Line3 ( last name )
         JPanel panel2 = new JPanel();
-        JTextField textField2 = new JTextField("Soysal");
+        textField2 = new JTextField("N/A");
         textField2.setPreferredSize(new Dimension(200,40));
         textField2.setFont(font);
         textField2.setBorder(BorderFactory.createTitledBorder(new TitledBorder("Last Name:")));
         textField2.setForeground(foregroundColor);
-        JButton button2 = new JButton("Update");
+        button2 = new JButton("Update");
         button2.setPreferredSize(new Dimension(140,40));
         button2.setFont(font1);
         button2.setBackground(foregroundColor);
         button2.setForeground(backgroundColor);
+        button2.setActionCommand("LASTNAME");
+        button2.addActionListener(this);
         panel2.add(textField2);
         panel2.add(button2);
 
         //Line4 ( Social Insurance Number )
         JPanel panel3 = new JPanel();
-        JTextField textField3 = new JTextField("67921481");
+        textField3 = new JTextField("N/A");
         textField3.setPreferredSize(new Dimension(200,40));
         textField3.setFont(font);
         textField3.setBorder(BorderFactory.createTitledBorder(new TitledBorder("SIN:")));
         textField3.setForeground(foregroundColor);
-        JButton button3 = new JButton("Update");
+        button3 = new JButton("Update");
         button3.setPreferredSize(new Dimension(140,40));
         button3.setFont(font1);
         button3.setBackground(foregroundColor);
         button3.setForeground(backgroundColor);
+        button3.setActionCommand("SIN");
+        button3.addActionListener(this);
         panel3.add(textField3);
         panel3.add(button3);
 
         //Line5 ( BirthDate )
         JPanel panel4 = new JPanel();
-        JTextField textField4 = new JTextField("25.05.1976");
+        textField4 = new JTextField("N/A");
         textField4.setPreferredSize(new Dimension(200,40));
         textField4.setFont(font);
         textField4.setBorder(BorderFactory.createTitledBorder(new TitledBorder("Birth Date:")));
         textField4.setForeground(foregroundColor);
-        JButton button4 = new JButton("Update");
+        button4 = new JButton("Update");
         button4.setPreferredSize(new Dimension(140,40));
         button4.setFont(font1);
         button4.setBackground(foregroundColor);
         button4.setForeground(backgroundColor);
+        button4.setActionCommand("DATE");
+        button4.addActionListener(this);
         panel4.add(textField4);
         panel4.add(button4);
 
 
         //Balance Field
         JPanel panel5 = new JPanel();
-        JLabel label5 = new JLabel("Balance: " + "3124" + "." + "56" + " " + "CAD");
+        JLabel label5 = new JLabel("Balance: ");
+        label6 = new JLabel("N/A");//balLeft
+        JLabel label7 = new JLabel(".");
+        label8 = new JLabel("N/A"); // balRight
+        label9 = new JLabel("N/A");//currency
+
         label5.setFont(font2);
-        label5.setForeground(foregroundColor);
+        label6.setFont(font2);
+        label7.setFont(font2);
+        label8.setFont(font2);
+        label9.setFont(font2);
+        panel5.setForeground(foregroundColor);
         panel5.add(label5);
+        panel5.add(label6);
+        panel5.add(label7);
+        panel5.add(label8);
+        panel5.add(label9);
 
 
         //Deposit Field
         JPanel panel6 = new JPanel();
-        JTextField textField6 = new JTextField();
+        textField6 = new JTextField();
         textField6.setPreferredSize(new Dimension(200,40));
         textField6.setFont(font);
         textField6.setBorder(BorderFactory.createTitledBorder(new TitledBorder("Enter Amount:")));
@@ -144,12 +210,14 @@ class Customer extends JFrame implements ActionListener {
         button6.setFont(font1);
         button6.setBackground(Color.RED);
         button6.setForeground(backgroundColor);
+        button6.setActionCommand("DEPOSIT");
+        button6.addActionListener(this);
         panel6.add(button6);
         panel6.add(textField6);
 
         //Withdraw Field
         JPanel panel7 = new JPanel();
-        JTextField textField7 = new JTextField();
+        textField7 = new JTextField();
         textField7.setPreferredSize(new Dimension(200,40));
         textField7.setFont(font);
         textField7.setBorder(BorderFactory.createTitledBorder(new TitledBorder("Enter Amount:")));
@@ -159,14 +227,20 @@ class Customer extends JFrame implements ActionListener {
         button7.setFont(font1);
         button7.setBackground(Color.BLUE);
         button7.setForeground(backgroundColor);
+        button7.setActionCommand("WITHDRAW");
+        button7.addActionListener(this);
         panel7.add(button7);
         panel7.add(textField7);
 
         //Last Activity Line
         JPanel lastActivity = new JPanel();
-        JLabel last = new JLabel("Last Activity: "+"May 9, 2016 00:28");
+        JLabel la = new JLabel("Last Activity: ");
+        la.setFont(font3);
+        last = new JLabel("N/A");
         last.setFont(font3);
+        lastActivity.add(la);
         lastActivity.add(last);
+
 
         JPanel midPanel = new JPanel();
         infoPanel.add(p);
@@ -188,12 +262,68 @@ class Customer extends JFrame implements ActionListener {
         this.add(bottomPanel,BorderLayout.PAGE_END);
     }
 
-
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        eventHandler(e);
     }
 
+    /**
+     * Handles the events depending on their status code
+     * @param e of type ActionEvent
+     */
+    private void eventHandler(ActionEvent e){
+
+        Date date = new Date();
+        user.setLastActivity(date.toString());
+        last.setText(user.getLastActivity());
+
+
+        if ("NAME".equals(e.getActionCommand())){
+            boolean isSuccess = user.setName(textField1.getText());
+            if(isSuccess) button1.setBackground(successColor);
+            else button1.setBackground(failureColor);
+        }
+
+        else if("LASTNAME".equals(e.getActionCommand())){
+            boolean isSuccess = user.setLastName(textField2.getText());
+            if(isSuccess) button2.setBackground(successColor);
+            else button2.setBackground(failureColor);
+        }
+
+        else if("SIN".equals(e.getActionCommand()))  {
+            try{
+                boolean isSuccess = user.setSIN(Integer.parseInt(textField3.getText()));
+                if(isSuccess) button3.setBackground(successColor);
+                else button3.setBackground(failureColor);
+            } catch(NumberFormatException ex){
+                JOptionPane.showMessageDialog(null,"Error --> Please Enter an Integer");
+                button3.setBackground(failureColor);
+            }
+        }
+        else if("DATE".equals(e.getActionCommand())){
+            boolean isSuccess = user.setBirthDate(textField4.getText());
+            if(isSuccess) button4.setBackground(successColor);
+            else button4.setBackground(failureColor);
+        }
+
+        else if("DEPOSIT".equals(e.getActionCommand()))  {
+            try{
+                user.deposit(Integer.parseInt(textField6.getText()));
+            } catch(NumberFormatException ex){
+                JOptionPane.showMessageDialog(null,"Error --> Please Enter an Integer");
+            }
+            label6.setText(Integer.toString(user.getBalLeft()));
+        }
+
+        else if("WITHDRAW".equals(e.getActionCommand())){
+            try{
+                user.withdraw(Integer.parseInt(textField7.getText()));
+            } catch(NumberFormatException ex){
+                JOptionPane.showMessageDialog(null,"Error --> Please Enter an Integer( Multiples of 20 )");
+            }
+            label6.setText(Integer.toString(user.getBalLeft()));
+        }
+    }
 
     public static void main(String[] args) {
 

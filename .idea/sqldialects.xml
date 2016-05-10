@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/.settings" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/account/Account.java" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/src/account/AccountImplement.java" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/src/account/Admin.java" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/src/account/ChequingAccount.java" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/src/account/Customer.java" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/src/account/MySQLConnect.java" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/src/account/UserInterface.java" dialect="MySQL" />
+  </component>
+</project>
