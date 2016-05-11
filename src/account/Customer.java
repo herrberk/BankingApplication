@@ -73,8 +73,8 @@ class Customer extends JFrame implements ActionListener {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         JPanel infoPanel = new JPanel();
         JPanel balancePanel = new JPanel();
-        infoPanel.setLayout(new GridLayout(5, 1,10,10));
-        balancePanel.setLayout(new GridLayout(4, 1,10,10));
+        infoPanel.setLayout(new GridLayout(5, 1,2,2));
+        balancePanel.setLayout(new GridLayout(4, 1,2,2));
 
 
         // Top image
@@ -99,6 +99,20 @@ class Customer extends JFrame implements ActionListener {
         copyright.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
         bottomPanel.add(copyright);
 
+        // Logout Button
+        JButton logout = new JButton();
+        ImageIcon l1 = UserInterface.createImageIcon("./images/logout.png");
+        ImageIcon l2 = UserInterface.createImageIcon("./images/logout2.png");
+        logout.setIcon(l1);
+        logout.setPressedIcon(l2);
+        logout.setBackground(backgroundColor);
+        logout.setBorderPainted(false);
+        logout.setContentAreaFilled(false);
+        logout.setFocusPainted(false);
+        logout.setSize(new Dimension(10, 10));
+        logout.setActionCommand("LOGOUT");
+        logout.addActionListener(this);
+
         //Line1 (AccountID)
         JPanel p = new JPanel();
         JLabel accID = new JLabel("Account ID: ");
@@ -107,6 +121,7 @@ class Customer extends JFrame implements ActionListener {
         ID.setFont(font);
         p.add(accID);
         p.add(ID);
+        p.add(logout);
 
         //Line2 ( name )
         JPanel panel1 = new JPanel();
@@ -277,6 +292,11 @@ class Customer extends JFrame implements ActionListener {
         user.setLastActivity(date.toString());
         last.setText(user.getLastActivity());
 
+
+        if("LOGOUT".equals(e.getActionCommand())){
+            JOptionPane.showMessageDialog(null,"Logged out successfully!");
+            System.exit(0);
+        }
 
         if ("NAME".equals(e.getActionCommand())){
             boolean isSuccess = user.setName(textField1.getText());

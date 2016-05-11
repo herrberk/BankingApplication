@@ -30,7 +30,9 @@ interface Account {
 	
 	boolean createAccount(int ID);
 	
-	boolean deleteAccount(long accountID);
+	boolean deleteAccount(int accountID);
+
+
 
 
 	

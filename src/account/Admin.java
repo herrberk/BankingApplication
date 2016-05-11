@@ -8,17 +8,15 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
 
-
+/**
+ * Creates the UI for Admin Panel and listens to the events on that panel.
+ */
 class Admin extends JFrame implements ActionListener {
 
     private static final Color backgroundColor = Color.WHITE;
     private static final Color foregroundColor = Color.BLACK;
-    private static final Color successColor = Color.GREEN;
-    private static final Color failureColor = Color.RED;
     private static final Color regularColor = Color.BLUE;
-
     private static final Font font = new Font("SansSerif", Font.BOLD, 16);
-    private static final Font font1 = new Font("SansSerif", Font.BOLD, 14);
     private static final Font font2 = new Font("SansSerif", Font.BOLD, 22);
     private static final Font font3 = new Font("SansSerif",  Font.ITALIC, 14);
     private String select=null;
@@ -66,10 +64,11 @@ class Admin extends JFrame implements ActionListener {
 
     }
 
-    @SuppressWarnings("unchecked")
+
     /**
      * Initializes and creates all the visual elements required for this Frame
      */
+    @SuppressWarnings("unchecked")
     private void initialize() {
         setSize(500, 600);
         setResizable(false);
@@ -115,6 +114,21 @@ class Admin extends JFrame implements ActionListener {
         logout.setSize(new Dimension(10, 10));
         logout.setActionCommand("LOGOUT");
         logout.addActionListener(this);
+
+
+        // Delete Button
+        JButton delete = new JButton();
+        ImageIcon d1 = UserInterface.createImageIcon("./images/delete.png");
+        ImageIcon d2 = UserInterface.createImageIcon("./images/delete2.png");
+        delete.setIcon(d1);
+        delete.setPressedIcon(d2);
+        delete.setBackground(backgroundColor);
+        delete.setBorderPainted(false);
+        delete.setContentAreaFilled(false);
+        delete.setFocusPainted(false);
+        delete.setSize(new Dimension(10, 10));
+        delete.setActionCommand("DELETE");
+        delete.addActionListener(this);
 
         // List Selection of Accounts in the database
         JPanel p = new JPanel();
@@ -196,14 +210,21 @@ class Admin extends JFrame implements ActionListener {
 
         //SAVE Button
         JPanel panel4 = new JPanel();
-        button = new JButton("SAVE");
-        button.setPreferredSize(new Dimension(140,40));
-        button.setFont(font1);
+        button = new JButton();
+        ImageIcon s1 = UserInterface.createImageIcon("./images/save.png");
+        ImageIcon s2 = UserInterface.createImageIcon("./images/save2.png");
+        button.setIcon(s1);
+        button.setPressedIcon(s2);
         button.setBackground(Color.BLUE);
-        button.setForeground(backgroundColor);
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setSize(new Dimension(10, 10));
         button.setActionCommand("SAVE");
         button.addActionListener(this);
+
         panel4.add(button);
+        panel4.add(delete);
 
         //Last Activity Line
         JPanel lastActivity = new JPanel();
@@ -304,9 +325,7 @@ class Admin extends JFrame implements ActionListener {
                 throw new Exception();
             }
         }
-        button.setBackground(successColor);
-
-
+        JOptionPane.showMessageDialog(null, "New Account --> "+ user.getID() + " Added !");
 
     }
 
@@ -315,11 +334,12 @@ class Admin extends JFrame implements ActionListener {
         eventHandler(e);
     }
 
-    @SuppressWarnings("unchecked")
+
     /**
      * Handles the events depending on their status code
      * @param e of type ActionEvent
      */
+    @SuppressWarnings("unchecked")
     private void eventHandler(ActionEvent e){
 
         JComboBox<String> cb;
@@ -352,13 +372,10 @@ class Admin extends JFrame implements ActionListener {
             if ("SAVE".equals(e.getActionCommand())) {
 
                 if(select.equals("-- Create New --")){
-
-
                     ChequingAccount newUser = new ChequingAccount(newID);
                     newUser.setID(newID);
                     updateInfo(newUser);
                     newUser.createAccount(newID);
-
                 }
                 else {
                     updateInfo(user);
@@ -366,17 +383,42 @@ class Admin extends JFrame implements ActionListener {
             }
         } catch(Exception ex){
             JOptionPane.showMessageDialog(null, "Error --> Cannot Write to the Database");
-
-            button.setBackground(failureColor);
-
         }
 
-        //Event 3 - User presses on Logout button
+        //Event 3 - Admin presses on Logout button
         if("LOGOUT".equals(e.getActionCommand())){
             JOptionPane.showMessageDialog(null,"Logged out successfully!");
             System.exit(0);
         }
-    }
+
+        //Event 4 - Admin presses on Delete button
+
+        if ("DELETE".equals(e.getActionCommand())) {
+
+            switch (select) {
+                case "-- Create New --":
+                    JOptionPane.showMessageDialog(null, "No User Selected!");
+                    break;
+                case "0":
+                    JOptionPane.showMessageDialog(null, "Cannot Delete Admin!!");
+                    break;
+                default:
+                    int userID = user.getID();
+                    int response = JOptionPane.showConfirmDialog(null, "Delete " + user.findUserName(userID) + " ?");
+
+                    if (response == JOptionPane.OK_OPTION) {
+                        JOptionPane.showMessageDialog(null, "ID "+ userID + " Has Been Successfully Deleted!");
+                        user.deleteAccount(user.getID());
+                    }
+                    break;
+            }
+
+        }
+
+
+        }
+
+
 
     /*public static void main(String[] args) {
 

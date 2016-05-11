@@ -5,6 +5,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+/**
+ * Connects to the database and realizes important functionalities
+ * findAccountID(), loadUserData(),createAccount(), deleteAccount()...
+ */
+
 class AccountImplement implements Account{
 
 	private int ID;
@@ -98,22 +103,23 @@ class AccountImplement implements Account{
 	/**
 	 * Gets the accountID matching the username
 	 */
-	private void findUserName(int ID){
+	 String findUserName(int ID){
 
-
+		String username=null;
 		try {
 			statement = con.createStatement();
 			String sql = "SELECT Username FROM account WHERE accountID = " + ID;
 			ResultSet rs = statement.executeQuery(sql);
 
 			while(rs.next()){
-				String username = rs.getString("Username");
+				username = rs.getString("Username");
 			}
 			rs.close();
 
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(null,"Load Unsuccessful!");
 		}
+		return username;
 	}
 
 	@Override
@@ -425,17 +431,25 @@ class AccountImplement implements Account{
 	/**
 	 * Deletes an account
 	 */
-	public boolean deleteAccount(long accountID) {
-		if ( this.ID == accountID ){
-			name = lastName = birthDate = null;
-			lastActivity=null;
-			this.ID = 0;
-			balLeft=balRight=SIN=0;
-			boolean accountInUse = false;
-			return true;
-		}
+	public boolean deleteAccount(int accountID) {
+		boolean isSuccess;
 
-		else return false;
+		try {
+			statement = con.createStatement();
+			String sql = "DELETE FROM bankdb " +
+					" WHERE accountID ="+ accountID;
+			String sql2 = "DELETE FROM account " +
+					" WHERE accountID ="+ accountID;
+			statement.executeUpdate(sql);
+			statement.executeUpdate(sql2);
+			isSuccess = true;
+
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null,"Error --> Cannot Delete!");
+			e.printStackTrace();
+			isSuccess = false;
+		}
+	return isSuccess;
 	}
 
 }

@@ -10,6 +10,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+/**
+ * The User Interface of the Application, manages the login process, contains the main method..
+ */
 class UserInterface extends JPanel implements ActionListener {
 
     private JLabel picture;
