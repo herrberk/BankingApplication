@@ -2,10 +2,17 @@ package account;
 
 class ChequingAccount extends AccountImplement{
 
+
+
+	ChequingAccount(int id){
+		super(id);
+	}
+
 	
-	ChequingAccount(){
-		super();
+	ChequingAccount(String username){
+		super(username);
 		}
+
 
 }
 

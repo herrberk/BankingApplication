@@ -11,34 +11,73 @@ class AccountImplement implements Account{
 	private int balLeft, balRight, SIN;
 	private String lastActivity;
 	private String name, lastName, birthDate, currency;
-	private boolean accountInUse;
 	private Connection con=null;
 	private Statement statement;
 
 	/**
-	 * Constructor Method - connects to the database and loads the user data
+	 * Constructor Method - connects to the database and loads the admin
 	 */
-	AccountImplement() {
+	AccountImplement(int ID) {
 
 		//Create a connection to the Database
 		con = MySQLConnect.ConnectDB();
 
 		//load user data
-		loadUserData(1);
+		findUserName(ID);
+		loadUserData(ID);
+	}
+
+	/**
+	 * Constructor Method - connects to the database and loads the user data
+	 */
+	AccountImplement(String username) {
+
+		//Create a connection to the Database
+		con = MySQLConnect.ConnectDB();
+
+		//load user data
+		findAccountID(username);
+		loadUserData(ID);
 
 	}
 
-	private void loadUserData(int receivedID){
+	/**
+	 * Finds the accountID of the given username
+	 * @param username of type String
+     */
+	private void findAccountID(String username){
 
+		// Get the accountID matching the username
 		try {
 			statement = con.createStatement();
-			String sql = "SELECT accountID, name, lastname, SIN, birthdate,balleft,balright,currency," +
-					"lastactivity FROM bankdb WHERE accountID = " + receivedID;
+			String sql = "SELECT accountID FROM account WHERE Username = '" + username+"'";
+			ResultSet rs = statement.executeQuery(sql);
+
+			while(rs.next()){
+				ID = rs.getInt("accountID");
+			}
+			rs.close();
+
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(null,"Load Unsuccessful!");
+		}
+
+	}
+
+	/**
+	 * Loads data from the database for the given ID
+	 * @param ID of type int
+     */
+	private void loadUserData(int ID){
+		try {
+			statement = con.createStatement();
+			String sql = "SELECT  name, lastname, SIN, birthdate,balleft,balright,currency," +
+					"lastactivity FROM bankdb WHERE accountID = " + ID;
 			ResultSet rs = statement.executeQuery(sql);
 
 			while(rs.next()){
 				//Retrieve by column name
-				ID = rs.getInt("accountID");
+
 				name  = rs.getString("name");
 				lastName = rs.getString("lastname");
 				SIN = rs.getInt("SIN");
@@ -52,7 +91,28 @@ class AccountImplement implements Account{
 			rs.close();
 
 		} catch (Exception e1) {
-			e1.printStackTrace();
+			JOptionPane.showMessageDialog(null,"Load Unsuccessful!");
+		}
+	}
+
+	/**
+	 * Gets the accountID matching the username
+	 */
+	private void findUserName(int ID){
+
+
+		try {
+			statement = con.createStatement();
+			String sql = "SELECT Username FROM account WHERE accountID = " + ID;
+			ResultSet rs = statement.executeQuery(sql);
+
+			while(rs.next()){
+				String username = rs.getString("Username");
+			}
+			rs.close();
+
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(null,"Load Unsuccessful!");
 		}
 	}
 
@@ -163,11 +223,11 @@ class AccountImplement implements Account{
 
 	@Override
 	public boolean setID(int ID) {
+
  		 this.ID = ID;
+		 loadUserData(ID);
 
-		// Incomplete
-
-		 return false;
+		 return true;
 	 }
 
 	@Override
@@ -333,21 +393,33 @@ class AccountImplement implements Account{
 	}
 
 	/**
-	 * Creates an account with the given information
+	 * Creates an account with the given information, writes it to the database
 	 */
-	public boolean createAccount(String name, String lastName, String birthDate, int SIN, int ID, String currency) {
+	public boolean createAccount(int newID){
+		boolean isSuccess;
 
-		if(!accountInUse){
-			this.SIN = SIN;
-			this.ID = ID;
-			this.birthDate=birthDate;
-			this.name = name;
-			this.lastName = lastName;
-			this.currency=currency;
-			accountInUse=true;
-			return true;
+		try {
+				statement = con.createStatement();
+				String sql = "INSERT INTO bankdb(accountID, name, lastname, SIN, birthdate, " +
+						"balleft, balright, currency,lastactivity) " +
+						" VALUES("+ newID +",'"+name+"','"+ lastName+ "',"+SIN+",'"+birthDate+"',"+balLeft+","+
+						balRight+",'"+currency+"','none');";
+
+				String sql2 = "INSERT INTO account(accountID, Username, Password) " +
+						"VALUES("+ newID + ",'"+name+"',"+SIN+"); ";
+
+				statement.executeUpdate(sql);
+				statement.executeUpdate(sql2);
+				isSuccess = true;
+
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null,"Error --> Cannot Create a New User");
+			e.printStackTrace();
+			isSuccess = false;
 		}
-		else return false;
+
+		return isSuccess;
+
 	}
 
 	/**
@@ -359,7 +431,7 @@ class AccountImplement implements Account{
 			lastActivity=null;
 			this.ID = 0;
 			balLeft=balRight=SIN=0;
-			accountInUse=false;
+			boolean accountInUse = false;
 			return true;
 		}
 

@@ -22,6 +22,10 @@ class UserInterface extends JPanel implements ActionListener {
     private String select=null;
     private static final int maxNumberOfTries = 5;
     private static JFrame frame;
+    private JLabel status;
+    private ImageIcon online;
+    private ImageIcon offline;
+
 
     private Connection con=null;
 
@@ -42,16 +46,13 @@ class UserInterface extends JPanel implements ActionListener {
 
 
         //Set up the online/offline status indicator.
-        JLabel status = new JLabel();
+        status = new JLabel();
         status.setHorizontalAlignment(JLabel.LEFT);
-        ImageIcon online = createImageIcon("./images/online.png");
-        ImageIcon offline = createImageIcon("./images/offline.png");
+        online = createImageIcon("./images/online.png");
+        offline = createImageIcon("./images/offline.png");
         status.setBorder(BorderFactory.createEmptyBorder(10,20,0,20));
 
-        if(MySQLConnect.status){
-            status.setIcon(online);
-        } else status.setIcon(offline);
-
+        status();
 
 
         // Initialize the 3 Panels (left - auth - right)
@@ -172,6 +173,12 @@ class UserInterface extends JPanel implements ActionListener {
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wce);
     }
 
+    private void status(){
+        if(MySQLConnect.status){
+            status.setIcon(online);
+        } else status.setIcon(offline);
+    }
+
     /**
      * Listens to the events */
     public void actionPerformed(ActionEvent e) {
@@ -186,6 +193,8 @@ class UserInterface extends JPanel implements ActionListener {
      */
     @SuppressWarnings("unchecked")
     private void eventHandler(ActionEvent e) {
+
+        status();
 
         JComboBox<String> cb;
 
@@ -234,7 +243,9 @@ class UserInterface extends JPanel implements ActionListener {
                  }
 
             } catch(Exception e3){
-                 JOptionPane.showMessageDialog(null, "Error --> System is Offline..");
+                 JOptionPane.showMessageDialog(null, "Error --> Login Error..");
+                //e3.printStackTrace();
+
             }
         }
     }

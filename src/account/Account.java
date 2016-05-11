@@ -28,12 +28,7 @@ interface Account {
 	
 	boolean deposit(int amount);
 	
-	boolean createAccount(String name,
-								 String lastName,
-								 String birthDate,
-								 int SIN,
-								 int ID,
-								 String currency);
+	boolean createAccount(int ID);
 	
 	boolean deleteAccount(long accountID);
 

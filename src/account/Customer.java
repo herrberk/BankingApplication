@@ -41,7 +41,7 @@ class Customer extends JFrame implements ActionListener {
 
         initialize();
 
-        user = new ChequingAccount();
+        user = new ChequingAccount(username);
         getUserData();
 
     }
@@ -325,8 +325,8 @@ class Customer extends JFrame implements ActionListener {
         }
     }
 
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
 
         java.awt.EventQueue.invokeLater(() -> new Customer("").setVisible(true));
-    }
+    } */
 }
