@@ -5,8 +5,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Creates the UI for Admin Panel and listens to the events on that panel.
@@ -32,18 +31,21 @@ class Admin extends JFrame implements ActionListener {
     private int newID;
     private ChequingAccount user;
     private ArrayList<String> myList;
+    private IdleListener timer;
 
 
     Admin() {
         super("**** Admin Console  ****");
+        timer = new IdleListener(180);
 
         initialize();
+
+        timer.startTimer();
 
         // create an ID for the new user
         newID = createID(myList);
 
         user = new ChequingAccount(newID);
-
 
     }
 
@@ -63,7 +65,6 @@ class Admin extends JFrame implements ActionListener {
         last.setText(user.getLastActivity());
 
     }
-
 
     /**
      * Initializes and creates all the visual elements required for this Frame
@@ -130,6 +131,11 @@ class Admin extends JFrame implements ActionListener {
         delete.setActionCommand("DELETE");
         delete.addActionListener(this);
 
+
+        // Remaining Time
+
+
+
         // List Selection of Accounts in the database
         JPanel p = new JPanel();
 
@@ -148,6 +154,7 @@ class Admin extends JFrame implements ActionListener {
 
         p.add(list);
         p.add(logout);
+
         //Line2 ( name )
         JPanel panel1 = new JPanel();
         textField1 = new JTextField();
@@ -331,6 +338,8 @@ class Admin extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        timer.eventDispatched(e);
+
         eventHandler(e);
     }
 

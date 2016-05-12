@@ -35,11 +35,15 @@ class Customer extends JFrame implements ActionListener {
     private JLabel label8;
     private JLabel label9;
     private ChequingAccount user;
+    private IdleListener timer;
 
     Customer(String username) {
         super("**** Customer Console : " + username + " ****");
+        timer = new IdleListener(180);
 
         initialize();
+
+        timer.startTimer();
 
         user = new ChequingAccount(username);
         getUserData();
@@ -279,6 +283,7 @@ class Customer extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        timer.eventDispatched(e);
         eventHandler(e);
     }
 
