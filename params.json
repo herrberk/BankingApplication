@@ -1,0 +1,6 @@
+{
+  "name": "Banking Application",
+  "tagline": "Java Database Integration (JDBC) with MySQL and Swing – Bank Login System Project",
+  "body": "### (JDBC) with MySQL and Swing\r\nIn this project I have created a login page for an imaginary bank called Botbank using Java and MySQL. The user interface of the application is shown below. The green light on the right top corner of the page illustrates the status of the database connection. First, the user selects his role ( Admin or Customer ). Then he enters the login information and clicks on the Login button...\r\n## **[Read more on http://soysal.tk](http://berksoysal.blogspot.com/2016/05/jdbc-mysql-bank-login-system-project.html)**\r\n\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
